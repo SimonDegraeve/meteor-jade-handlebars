@@ -6,6 +6,10 @@ var jade = require('jade');
 var fs = require('fs');
 var path = require('path');
 
+Package.on_use(function (api) {
+  api.use('templating', 'client');
+});
+
 Package.register_extension(
   "jade", function(bundle, source_path, serve_path, where) {
 
