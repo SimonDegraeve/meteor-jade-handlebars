@@ -2,12 +2,14 @@ Package.describe({
   summary: "Write your templates using Handlebars and Jade instead of HTML and Handlebars"
 });
 
-var jade = require('jade');
-var fs = require('fs');
-var path = require('path');
+var fs           = require('fs');
+var path         = require('path');
+var jade         = require(path.join(process.env.PACKAGE_DIRS, 'jade-handlebars/jade'));
+var html_scanner = require(path.join(process.env.PACKAGE_DIRS, 'jade-handlebars/html_scanner'));
 
 Package.on_use(function (api) {
   api.use('templating', 'client');
+
 });
 
 Package.register_extension(
@@ -30,7 +32,6 @@ Package.register_extension(
     if (where !== "client")
       return;
 
-    var html_scanner = require(path.join('..', '..', 'packages', 'templating', 'html_scanner.js'));
     var results = html_scanner.scan(contents.toString('utf8'), source_path);
 
     if (results.head)
