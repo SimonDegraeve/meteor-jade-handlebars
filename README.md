@@ -49,6 +49,13 @@ Navigate to your Meteor project directory and add the package.
 
 Then, don't forget to run your project using `mrt` instead of `meteor`.
     
+## Troubleshooting
+
+If you get this error
+
+    Uncaught ReferenceError: Template is not defined
+
+Make sure your template is loaded before your code JS.
 
 ## Todo
 
