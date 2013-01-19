@@ -37,6 +37,8 @@ You may write (demo.jade):
       {{greeting}}
       input(type="button", value="Click")
 
+See more details with the [todos example](https://github.com/SimonDegraeve/meteor-jade-handlebars/blob/master/examples/todos/client/todos.jade).
+
 ## Installation
 
 To install Jade-handlebars using [Atmosphere](https://atmosphere.meteor.com), simply install Meteorite.
@@ -48,14 +50,6 @@ Navigate to your Meteor project directory and add the package.
     $ mrt add jade-handlebars
 
 Then, don't forget to run your project using `mrt` instead of `meteor`.
-    
-## Troubleshooting
-
-If you get this error
-
-    Uncaught ReferenceError: Template is not defined
-
-Make sure your template is loaded before your code JS.
 
 ## Todo
 

@@ -1,0 +1,86 @@
+//-
+  HTML
+head
+  title Todos
+
+body
+  #top-tag-filter
+    {{> tag_filter}}
+
+  #main-pane
+    {{> todos}}
+
+  #side-pane
+    {{> lists}}
+
+//-
+  Templates
+template(name="lists")
+  h3 Todo Lists
+  #lists
+    {{#each lists}}
+      div(class="list {{selected}}")
+        {{#if editing}}
+          .edit
+            input(class="list-name-input", id="list-name-input", type="text", value="{{name}}")
+        {{else}}
+          .display
+            a(class="list-name {{name_class}}", href="/{{_id}}") {{name}}
+        {{/if}}
+    {{/each}}
+  #createList
+    input(type="text", id="new-list", placeholder="New list")
+
+template(name="todos")
+  {{#if any_list_selected}}
+    #items-view
+      #new-todo-box
+        input(type="text", id="new-todo", placeholder="New item")
+      ul#item-list
+        {{#each todos}}
+          {{> todo_item}}
+        {{/each}}
+  {{/if}}
+
+template(name="todo_item")
+  li(class="todo {{done_class}}")
+    {{#if editing}}
+      .edit
+        input(id="todo-input", type="text", value="{{text}}")
+    {{else}}
+      .destroy
+      .display
+
+        // 
+        // /!\ We can not set an attribute like that, Jade will fail!
+        // input(class="check", name="markdone", type="checkbox", {{done_checkbox}})
+        //
+
+        {{#if done_checkbox}}     
+          input(class="check", name="markdone", type="checkbox", checked="checked")
+        {{else}}
+          input(class="check", name="markdone", type="checkbox")
+        {{/if}}
+        .todo-text {{text}}
+    {{/if}}
+    .item-tags
+      {{#each tag_objs}}
+        .tag.removable_tag
+          .name {{tag}}
+          .remove
+      {{/each}}
+      {{#if adding_tag}}
+        .tag.edittag
+          input(type="text", id="edittag-input", value="")
+      {{else}}
+        .tag.addtag +tag
+      {{/if}}
+
+template(name="tag_filter")
+  div(id="tag-filter", class="tag-list")
+    .label Show:
+    {{#each tags}}
+      div(class="tag {{selected}}")
+        {{tag_text}}
+        span.count ({{count}})
+    {{/each}}

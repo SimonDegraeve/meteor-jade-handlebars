@@ -2,31 +2,91 @@ Package.describe({
   summary: "Write your templates using Handlebars and Jade instead of HTML and Handlebars"
 });
 
-var fs           = require('fs');
-var path         = require('path');
-var jade         = require(path.join(process.env.PACKAGE_DIRS, 'jade-handlebars/jade'));
-var html_scanner = require(path.join(process.env.PACKAGE_DIRS, 'jade-handlebars/html_scanner'));
+var fs            = require('fs');
+var path          = require('path');
+var jade          = require(path.join(process.env.PACKAGE_DIRS, 'jade-handlebars', 'jade'));
+var html_scanner  = require(path.join(process.env.PACKAGE_DIRS, 'jade-handlebars', 'html_scanner'));
+var StringScanner = require(path.join(process.env.PACKAGE_DIRS, 'jade-handlebars', 'cjs-string-scanner', 'lib', "StringScanner"));
+
 
 Package.on_use(function (api) {
   api.use('templating', 'client');
-
 });
 
 Package.register_extension(
   "jade", function(bundle, source_path, serve_path, where) {
 
+    // Variables
     var contents;
-    var options = { pretty: true };
+    var lines = [];
+    var json = [];
+    var handlebarsPattern = /\s*(\{\{(?:[.]|[^\{])+\}\})/;
 
-    jade.renderFile(source_path, options, function(err, html) {
-      if (err)
-        bundle.error(err);
-      // Used to create the HTML File
-      //filename = source_path + '.html';
-      //fs.writeFileSync(filename, new Buffer(html));
+    // Handlebars hack
+    // Read the file content and create JSON
+    try{
+      // Create the string scanner with the .jade file content
+      var ss = new StringScanner(fs.readFileSync(source_path, "utf8"));
+      // Parse the file content until the end
+      while(!ss.endOfString()){
+        // Scan content per line
+        ss.scan(/(\s*)(.*)\n+/);
+        // Get the indentation of the line
+        indent = ss.captures()[0].length;
+        // Get the content of the line
+        value = ss.captures()[1];
+
+        // Variables for json
+        var child = [];
+        var tags = []
+
+        // Scan the content of the line to find handlebars tags
+        ss_line = new StringScanner(value);  
+        while(ss_line.checkUntil(handlebarsPattern)){
+          ss_line.scanUntil(handlebarsPattern);
+          tags.push({"position": ss_line.pointer()-ss_line.captures()[0].length, "value": ss_line.captures()[0]});
+        }
+        // End scan
+        ss_line.terminate();
+
+        // Create the JSON for the line
+        line = {"indent": indent, "content": value, "tags": tags, "child": child};
+
+        // Find arborescence
+        // If the line is root
+        if(line.indent == 0){
+          // Add to the main JSON
+          json.push(line);
+        }else{
+          // Add the child to the parent
+          for(var i=lines.length-1; i >= 0; i--){
+            if(lines[i].indent < line.indent){
+              lines[i].child.push(line);
+              break;
+            }
+          }  
+        }  
+        lines.push(line);   
+      }
+      // End scan
+      ss.terminate();
+    } catch(err) {
+      return bundle.error(err.message);
+    }
+
+    // Fix indentation
+    json = jsonParser(json);
+
+    // JSON to string
+    contents = jsonToContents(json);
+    
+    // Jade parser
+    var jade_options = { pretty: true };
+
+    jade.render(contents, jade_options, function(err, html){
+      if (err) throw err;
       contents = html;
     });
-
 
     // From meteor/templating package
     if (where !== "client")
@@ -69,3 +129,37 @@ Package.register_extension(
   }
 );
 
+function jsonParser(json) {
+  // Number fo indentation
+  n = 2;
+  // Start the loop
+  json.forEach(function(root){
+    root.child.forEach(function(child){            
+      // If line doesn't have HB tag
+      if(root.tags.length < 1){
+        child.indent = root.indent+n;
+      }
+      // If line has HB tag and start with HB tag and not comment
+      else if(root.tags.length > 0 && root.tags[0].position == 0 && !root.content.match(/^\/\/\-*.*/)) {
+          child.indent = root.indent;
+      }
+      // If child has child, recursive call  
+      if(child.child.length > 0)
+        jsonParser([child]);
+    });
+  });
+  return json;
+}
+
+var str = "";
+function jsonToContents(json) {
+  for(key in json){
+      if(key == "content"){
+        str += Array(json.indent+1).join(" ") + json.content + "\n";
+      } 
+      if (typeof(json[key])=="object") {
+          jsonToContents(json[key]);
+      }
+  }
+  return str;
+}
