@@ -20,7 +20,7 @@ Package.register_extension(
     var contents;
     var lines = [];
     var json = [];
-    var handlebarsPattern = /\s*(\{\{(?:[.]|[^\{])+\}\})/;
+    var handlebarsPattern = /\s*(\{\{.*(?!\{\{)\}\})/;
 
     // Handlebars hack
     // Read the file content and create JSON
@@ -30,7 +30,8 @@ Package.register_extension(
       // Parse the file content until the end
       while(!ss.endOfString()){
         // Scan content per line
-        ss.scan(/(\s*)(.*)\n+/);
+        ss.scan(/^(\ *)(.*)\n+/);
+
         // Get the indentation of the line
         indent = ss.captures()[0].length;
         // Get the content of the line
@@ -142,6 +143,9 @@ function jsonParser(json) {
       // If line has HB tag and start with HB tag and not comment
       else if(root.tags.length > 0 && root.tags[0].position == 0 && !root.content.match(/^\/\/\-*.*/)) {
           child.indent = root.indent;
+      }
+      else if(root.tags.length > 0 && root.tags[0].position != 0 && !root.content.match(/^\/\/\-*.*/)) {
+          child.indent = root.indent+n;
       }
       // If child has child, recursive call  
       if(child.child.length > 0)
