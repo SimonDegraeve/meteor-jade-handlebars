@@ -17,7 +17,6 @@ Package.register_extension(
   "jade", function(bundle, source_path, serve_path, where) {
 
     // Variables
-    var contents;
     var lines = [];
     var json = [];
     var handlebarsPattern = /\s*(\{\{.*(?!\{\{)\}\})/;
@@ -27,6 +26,7 @@ Package.register_extension(
     try{
       // Create the string scanner with the .jade file content
       var ss = new StringScanner(fs.readFileSync(source_path, "utf8"));
+      ss.reset();
       // Parse the file content until the end
       while(!ss.endOfString()){
         // Scan content per line
@@ -43,6 +43,7 @@ Package.register_extension(
 
         // Scan the content of the line to find handlebars tags
         ss_line = new StringScanner(value);  
+        ss_line.reset();
         while(ss_line.checkUntil(handlebarsPattern)){
           ss_line.scanUntil(handlebarsPattern);
           tags.push({"position": ss_line.pointer()-ss_line.captures()[0].length, "value": ss_line.captures()[0]});
@@ -79,7 +80,8 @@ Package.register_extension(
     json = jsonParser(json);
 
     // JSON to string
-    contents = jsonToContents(json);
+    global.contents_tmp = ""; // used in jsonToContents() function
+    contents = jsonToContents(json); 
     
     // Jade parser
     var jade_options = { pretty: true };
@@ -155,15 +157,17 @@ function jsonParser(json) {
   return json;
 }
 
-var str = "";
 function jsonToContents(json) {
-  for(key in json){
-      if(key == "content"){
-        str += Array(json.indent+1).join(" ") + json.content + "\n";
+  for(line in json){
+    for(attr in json[line]){
+        
+      if(attr == "content"){
+        global.contents_tmp += Array(json[line].indent+1).join(" ") + json[line][attr] + "\n";
       } 
-      if (typeof(json[key])=="object") {
-          jsonToContents(json[key]);
+      else if(attr == "child" && typeof(json[line][attr]) == "object") {
+          jsonToContents(json[line][attr]);
       }
+    }
   }
-  return str;
+  return global.contents_tmp;
 }

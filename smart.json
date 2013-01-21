@@ -3,6 +3,6 @@
   "description": "Write the templates in your Meteor Application using Handlebars and Jade instead of HTML and Handlebars",
   "homepage": "https://github.com/SimonDegraeve/meteor-jade-handlebars",
   "author": "Simon Degraeve",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "git": "https://github.com/SimonDegraeve/meteor-jade-handlebars.git"
 }
