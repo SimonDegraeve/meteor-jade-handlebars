@@ -8,7 +8,6 @@ var jade          = require(path.join(process.env.PACKAGE_DIRS, 'jade-handlebars
 var html_scanner  = require(path.join(process.env.PACKAGE_DIRS, 'jade-handlebars', 'html_scanner'));
 var StringScanner = require(path.join(process.env.PACKAGE_DIRS, 'jade-handlebars', 'cjs-string-scanner', 'lib', "StringScanner"));
 
-
 Package.on_use(function (api) {
   api.use('templating', 'client');
 });
