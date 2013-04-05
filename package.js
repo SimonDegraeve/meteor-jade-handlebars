@@ -2,11 +2,11 @@ Package.describe({
   summary: "Write your templates using Handlebars and Jade instead of HTML and Handlebars"
 });
 
-var fs            = require('fs');
-var path          = require('path');
-var jade          = require(path.join(process.env.PACKAGE_DIRS, 'jade-handlebars', 'jade'));
-var html_scanner  = require(path.join(process.env.PACKAGE_DIRS, 'jade-handlebars', 'html_scanner'));
-var StringScanner = require(path.join(process.env.PACKAGE_DIRS, 'jade-handlebars', 'cjs-string-scanner', 'lib', "StringScanner"));
+var fs            = Npm.require('fs');
+var path          = Npm.require('path');
+var jade          = Npm.require(path.join(process.env.PACKAGE_DIRS, 'jade-handlebars', 'jade'));
+var html_scanner  = Npm.require(path.join(process.env.PACKAGE_DIRS, 'jade-handlebars', 'html_scanner'));
+var StringScanner = Npm.require(path.join(process.env.PACKAGE_DIRS, 'jade-handlebars', 'cjs-string-scanner', 'lib', "StringScanner"));
 
 Package.on_use(function (api) {
   api.use('templating', 'client');
