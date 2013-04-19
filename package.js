@@ -2,6 +2,8 @@ Package.describe({
   summary: "Write your templates using Handlebars and Jade instead of HTML and Handlebars"
 });
 
+var require = require || Npm.require;
+
 var fs            = require('fs');
 var path          = require('path');
 
