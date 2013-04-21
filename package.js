@@ -9,8 +9,6 @@ Npm.depends({
 
 var fs            = Npm.require('fs');
 var path          = Npm.require('path');
-var jade          = Npm.require('jade');
-var StringScanner = Npm.require("StringScanner");
 
 // find jade-handlebars package dir
 var packageDir = null;
@@ -26,14 +24,15 @@ var packageDir = null;
   }
 }());
 
-var html_scanner  = Npm.require(path.join(packageDir, 'html_scanner'));
-
 Package.on_use(function (api) {
   api.use('templating', 'client');
 });
 
 Package.register_extension(
   "jade", function(bundle, source_path, serve_path, where) {
+    var jade          = Npm.require('jade');
+    var StringScanner = Npm.require("StringScanner");
+    var html_scanner  = Npm.require(path.join(packageDir, 'html_scanner'));
 
     // Variables
     var lines = [];
