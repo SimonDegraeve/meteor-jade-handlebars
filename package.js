@@ -12,6 +12,8 @@ Package.on_use(function (api) {
   api.use('templating', 'client');
 });
 
+Npm.depends({jade: "0.31.2"});
+
 Package.register_extension(
   "jade", function(bundle, source_path, serve_path, where) {
 
