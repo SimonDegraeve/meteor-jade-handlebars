@@ -1,6 +1,3 @@
-[submodule "jade"]
-	path = jade
+[submodule "plugin/jade"]
+	path = plugin/jade
 	url = https://github.com/visionmedia/jade.git
-[submodule "cjs-string-scanner"]
-	path = cjs-string-scanner
-	url = https://github.com/michaelficarra/cjs-string-scanner
