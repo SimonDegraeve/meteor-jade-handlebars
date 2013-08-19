@@ -3,9 +3,10 @@ Package.describe({
 });
 
 Package._transitional_registerBuildPlugin({
-  name: "compileJade",
+  name: "jade-handlebars",
   use: ["handlebars"],
   sources: [
+    "plugin/html_scanner.js",
     "plugin/compile-jade.js"
   ]
 });
