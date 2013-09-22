@@ -49,7 +49,7 @@ Navigate to your Meteor project directory and add the package.
 
     $ mrt add jade-handlebars
 
-Then, don't forget to run your project using `mrt` instead of `meteor`.
+If you use pre-0.6.0 Meteorite you also need to run your project using `mrt` instead of `meteor`. With Meteorite 0.6.0 or newer use `mrt install` to install/update your smart packages and plain `meteor` to run the server.
 
 ## Todo
 
