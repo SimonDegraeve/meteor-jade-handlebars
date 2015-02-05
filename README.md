@@ -1,3 +1,5 @@
+# DEPRECATED AND NO LONGER MAINTAINED
+
 # Jade-handlebars for Meteor
 
 Write the templates in your [Meteor](https://github.com/meteor/meteor) Application using [Handlebars](http://github.com/wycats/handlebars.js) and [Jade](https://github.com/visionmedia/jade) instead of HTML and Handlebars.
